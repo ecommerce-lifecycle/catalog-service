@@ -1,9 +1,9 @@
 # Catalog Service - Product APIs
 
-Base URL:  
+Base URL: http://localhost:8081/api/v1/products
 
-http://localhost:8081/api/v1/products
-
+---
+Swagger UI: http://localhost:8081/swagger-ui/index.html#/
 
 ---
 
@@ -109,4 +109,3 @@ Response:
 Response:
 HTTP 200 (no body)
 Product will be marked as inactive (active=false)
-
