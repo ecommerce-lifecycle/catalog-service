@@ -1,8 +1,8 @@
 package com.ecommerce.catalog.controller;
 
 import com.ecommerce.catalog.api.ApiResponse;
-import com.ecommerce.catalog.dtoMapper.ProductDto;
-import com.ecommerce.catalog.dtoMapper.ProductMapper;
+import com.ecommerce.catalog.dto.ProductDto;
+import com.ecommerce.catalog.mapper.ProductMapper;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.service.ProductService;
 

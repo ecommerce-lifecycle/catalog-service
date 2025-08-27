@@ -1,7 +1,8 @@
-package com.ecommerce.catalog.dtoMapper;
+package com.ecommerce.catalog.mapper;
 
 import java.time.LocalDateTime;
 
+import com.ecommerce.catalog.dto.ProductDto;
 import com.ecommerce.catalog.entity.Product;
 
 public class ProductMapper {

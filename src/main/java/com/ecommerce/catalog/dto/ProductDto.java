@@ -1,4 +1,4 @@
-package com.ecommerce.catalog.dtoMapper;
+package com.ecommerce.catalog.dto;
 
 import lombok.*;
 
