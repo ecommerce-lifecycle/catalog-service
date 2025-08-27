@@ -1,6 +1,8 @@
 package com.ecommerce.catalog.controller;
 
 import com.ecommerce.catalog.api.ApiResponse;
+import com.ecommerce.catalog.dtoMapper.ProductDto;
+import com.ecommerce.catalog.dtoMapper.ProductMapper;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.service.ProductService;
 
@@ -22,72 +24,78 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> create(@Valid @RequestBody Product product) {
-        Product created = productService.createProduct(product);
+    public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductDto productDto) {
+        Product created = productService.createProduct(ProductMapper.toEntity(productDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.<Product>builder()
+                ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.CREATED.value())
                         .message("Product created successfully")
-                        .data(created)
+                        .data(ProductMapper.toDto(created))
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Product>>> getAll() {
+    public ResponseEntity<ApiResponse<List<ProductDto>>> getAll() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(
-                ApiResponse.<List<Product>>builder()
+                ApiResponse.<List<ProductDto>>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.OK.value())
                         .message("Products fetched successfully")
-                        .data(products)
+                        .data(products.stream()
+                                .map(ProductMapper::toDto)
+                                .toList())
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ProductDto>> getById(@PathVariable UUID id) {
         Product product = productService.getProduct(id);
         return ResponseEntity.ok(
-                ApiResponse.<Product>builder()
+                ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.OK.value())
                         .message("Product fetched successfully")
-                        .data(product)
+                        .data(ProductMapper.toDto(product))
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> update(@PathVariable UUID id, @Valid @RequestBody Product product) {
-        Product updated = productService.updateProduct(id, product);
+    public ResponseEntity<ApiResponse<ProductDto>> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody ProductDto productDto) {
+
+        Product updated = productService.updateProduct(id, ProductMapper.toEntity(productDto));
         return ResponseEntity.ok(
-                ApiResponse.<Product>builder()
+                ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.OK.value())
                         .message("Product updated successfully")
-                        .data(updated)
+                        .data(ProductMapper.toDto(updated))
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<ApiResponse<Product>> deactivate(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ProductDto>> deactivate(@PathVariable UUID id) {
         Product deactivated = productService.deactivateProduct(id);
         return ResponseEntity.ok(
-                ApiResponse.<Product>builder()
+                ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.OK.value())
                         .message("Product deactivated successfully")
-                        .data(deactivated)
+                        .data(ProductMapper.toDto(deactivated))
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 }
+

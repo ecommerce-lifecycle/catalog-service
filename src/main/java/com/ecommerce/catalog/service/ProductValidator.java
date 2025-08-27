@@ -11,14 +11,15 @@ import com.ecommerce.catalog.exception.InvalidProductException;
 @Component
 public class ProductValidator {
 
+	List<String> validCategories = List.of("Mobile", "Electronics");
+	
     public void validate(Product product) {
         if (product.getPrice().compareTo(BigDecimal.valueOf(100)) < 0) {
             throw new InvalidProductException("Price must be at least 100");
         }
 
-        if (!List.of("Mobile", "Electronics").contains(product.getCategory())) {
+        if (!validCategories.contains(product.getCategory())) {
             throw new InvalidProductException("Invalid category. Allowed: Mobile, Electronics");
         }
     }
 }
-
