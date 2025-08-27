@@ -3,6 +3,8 @@ package com.ecommerce.catalog.controller;
 import com.ecommerce.catalog.api.ApiResponse;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.service.ProductService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +22,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Product>> create(@RequestBody Product product) {
+    public ResponseEntity<ApiResponse<Product>> create(@Valid @RequestBody Product product) {
         Product created = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<Product>builder()
@@ -49,7 +51,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Product>> getById(@PathVariable UUID id) {
-        Product product = productService.getProduct(id); // agar not found hua toh exception handler pakdega
+        Product product = productService.getProduct(id);
         return ResponseEntity.ok(
                 ApiResponse.<Product>builder()
                         .status("SUCCESS")
@@ -62,7 +64,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> update(@PathVariable UUID id, @RequestBody Product product) {
+    public ResponseEntity<ApiResponse<Product>> update(@PathVariable UUID id, @Valid @RequestBody Product product) {
         Product updated = productService.updateProduct(id, product);
         return ResponseEntity.ok(
                 ApiResponse.<Product>builder()

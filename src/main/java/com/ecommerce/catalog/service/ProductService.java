@@ -12,14 +12,17 @@ import java.time.LocalDateTime;
 
 @Service
 public class ProductService {
-
+	
+	private final ProductValidator productValidator;
     private final ProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductService(ProductValidator productValidator, ProductRepository productRepository) {
+        this.productValidator = productValidator;
+		this.productRepository = productRepository;
     }
 
     public Product createProduct(Product product) {
+    	productValidator.validate(product);
         return productRepository.save(product);
     }
 
@@ -36,6 +39,8 @@ public class ProductService {
 
     public Product updateProduct(UUID id, Product product) {
         Product existing = getProduct(id);
+        productValidator.validate(product);
+        
         existing.setName(product.getName());
         existing.setDescription(product.getDescription());
         existing.setPrice(product.getPrice());
