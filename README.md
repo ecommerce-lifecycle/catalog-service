@@ -1,6 +1,6 @@
 # Catalog Service - Product APIs
 
-Base URL: http://localhost:8081/api/products
+Base URL: http://localhost:8081/api/v1/products
 
 ---
 Swagger UI: http://localhost:8081/swagger-ui/index.html#/
@@ -10,7 +10,7 @@ Swagger UI: http://localhost:8081/swagger-ui/index.html#/
 ## Endpoints
 
 ### ➡️ Create Product
-**POST** `/api/products`
+**POST** `/api/v1/products`
 
 Request Body:
 ```json
@@ -44,7 +44,7 @@ Response:
 
 ➡️ Get All Products
 
-**GET** `/api/products`
+**GET** `/api/v1/products`
 
 Response:
 ```json
@@ -70,7 +70,7 @@ Response:
 
 ➡️ Get Product by ID
 
-**GET** `/api/products/{id}`
+**GET** `/api/v1/products/{id}`
 
 Response:
 ```json
@@ -94,7 +94,7 @@ Response:
 
 ➡️ Update Product
 
-**PUT** `/api/products/{id}`
+**PUT** `/api/v1/products/{id}`
 
 Request Body:
 ```json
@@ -128,7 +128,7 @@ Response:
 
 ➡️ Deactivate Product
 
-**PATCH** `/api/products/{id}/deactivate`
+**PATCH** `/api/v1/products/{id}/deactivate`
 
 Response:
 ```json
