@@ -134,7 +134,9 @@ mvn spring-boot:run
 👉 Before running locally, **delete infra volumes** (to avoid Kafka/Postgres state conflicts):
 
 ```bash
-rm -rf infra/kafka-data infra/zookeeper-data infra/postgres-data
+rmdir /s /q infra\kafka-data
+rmdir /s /q infra\zookeeper-data
+rmdir /s /q infra\postgres-data
 ```
 
 #### 2. Full rebuild (when dependencies change)
