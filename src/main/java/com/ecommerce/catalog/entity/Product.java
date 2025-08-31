@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
 @Entity
 @Table(name = "products")
 @Data
@@ -37,7 +40,11 @@ public class Product {
 	@NotBlank(message = "Category cannot be blank")
 	private String category;
 
-	private boolean active = true;
+	@Builder.Default
+	@Column(nullable = false, columnDefinition = "boolean default true")
+	@JsonSetter(nulls = Nulls.SKIP)
+	private Boolean active = true;
+
 
 	private LocalDateTime createdAt = LocalDateTime.now();
 

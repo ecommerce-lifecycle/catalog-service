@@ -1,31 +1,63 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/catalogdb
+    url: jdbc:postgresql://localhost:5432/catalog_db
     username: postgres
-    password: admin
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+  application:
+    name: catalog-service
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    client-id: ${spring.application.name}
+    consumer:
+      group-id: ${spring.application.name}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        # JSON me type headers mat bhejo (polyglot consumers ke liye clean JSON)
+        spring.json.add.type.headers: false
+        # Resilience
+        acks: all
+        enable.idempotence: true
+        retries: 10
+        delivery.timeout.ms: 120000
+        linger.ms: 5
+        compression.type: lz4
+    # optional but useful: default topic
+    template:
+      default-topic: product-events
+
+app:
+  topics:
+    product-events: product-events
 
 server:
   port: 8081
 
 springdoc:
   api-docs:
-    path: /api/v1.0.0/v3/api-docs
+    path: /api/v1/api-docs
   swagger-ui:
     path: /swagger-ui.html
 
 logging:
   level:
-    root: INFO
-    com.ecommerce.catalog.service: DEBUG
+    org.springframework.kafka: DEBUG
+    org.apache.kafka: DEBUG
   file:
-    name: logs/catalog-service.log
+    name: /app/logs/catalog.log

@@ -16,7 +16,7 @@ public class ProductMapper {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .category(product.getCategory())
-                .active(product.isActive())
+                .active(product.getActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
                 .build();
@@ -31,7 +31,7 @@ public class ProductMapper {
                 .description(dto.getDescription())
                 .price(dto.getPrice())
                 .category(dto.getCategory())
-                .active(dto.isActive())
+                .active(dto.getActive() != null ? dto.getActive() : true)
                 .createdAt(dto.getCreatedAt() != null ? dto.getCreatedAt() : LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

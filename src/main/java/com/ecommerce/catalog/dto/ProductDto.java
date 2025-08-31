@@ -33,7 +33,7 @@ public class ProductDto {
     @NotBlank(message = "Category cannot be blank")
     private String category;
     
-    private boolean active;
+    private Boolean active;
     
     private LocalDateTime createdAt;
     

@@ -11,7 +11,20 @@ import com.ecommerce.catalog.exception.InvalidProductException;
 @Component
 public class ProductValidator {
 
-	List<String> validCategories = List.of("Mobile", "Electronics");
+	List<String> validCategories = List.of(
+	        "Mobile",
+	        "Electronics",
+	        "Laptop",
+	        "Tablet",
+	        "Smartwatch",
+	        "Headphones",
+	        "Television",
+	        "Camera",
+	        "Appliance",
+	        "Furniture",
+	        "Clothing",
+	        "Footwear"
+	    );
 	
     public void validate(Product product) {
         if (product.getPrice().compareTo(BigDecimal.valueOf(100)) < 0) {
@@ -19,7 +32,7 @@ public class ProductValidator {
         }
 
         if (!validCategories.contains(product.getCategory())) {
-            throw new InvalidProductException("Invalid category. Allowed: Mobile, Electronics");
+            throw new InvalidProductException("Invalid category. Allowed: " + validCategories);
         }
     }
 }

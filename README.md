@@ -1,151 +1,160 @@
-# Catalog Service - Product APIs
+# Catalog Service – Product APIs 
 
-Base URL: http://localhost:8081/api/v1/products
-
----
-Swagger UI: http://localhost:8081/swagger-ui/index.html#/
+> This README assumes you will run the service via **Docker Compose** from the [infra repo](https://github.com/ecommerce-lifecycle/infra).  
+> Spring Boot service for managing products. Runs as part of the **infra stack** (Postgres + Kafka + Zookeeper + pgAdmin).
 
 ---
 
-## Endpoints
+## Quick Start (via Infra)
+
+1) **Clone both repos in a parent folder:**
+```bash
+# Parent folder
+mkdir -p ~/ecommerce-lifecycle && cd ~/ecommerce-lifecycle
+
+# Clone repos
+git clone https://github.com/ecommerce-lifecycle/catalog-service.git
+git clone https://github.com/ecommerce-lifecycle/infra.git
+````
+
+2. **Run stack (from infra repo)**
+
+```bash
+cd infra
+docker compose up -d --build
+```
+
+3. **Verify service**
+
+```bash
+docker compose ps
+docker logs -f catalog-service
+```
+
+4. **Open APIs**
+
+   * Base URL: [http://localhost:8081/api/v1/products](http://localhost:8081/api/v1/products)
+   * Swagger UI: [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html)
+   * Health: [http://localhost:8081/actuator/health](http://localhost:8081/actuator/health)
+
+---
+
+## Endpoints (Samples)
 
 ### ➡️ Create Product
-**POST** `/api/v1/products`
 
-Request Body:
+`POST /api/v1/products`
+
+```json
+{
+  "name": "OnePlus Nord CE 4",
+  "description": "OnePlus latest phone",
+  "price": 34999,
+  "category": "Mobile"
+}
+```
+
+*Response (201):*
+
+```json
+{
+  "status": "SUCCESS",
+  "code": 201,
+  "message": "Product created successfully",
+  "data": {
+    "id": "9adfad9a-4c52-40a6-9ea6-80152e70fd5b",
+    "name": "iPhone 13",
+    "description": "Apple latest phone",
+    "price": 59999.99,
+    "category": "Mobile",
+    "active": true,
+    "createdAt": "2025-08-26T18:45:32.015",
+    "updatedAt": "2025-08-26T18:45:32.015"
+  }
+}
+```
+
+### ➡️ Get All Products
+
+`GET /api/v1/products`
+
+### ➡️ Get Product by ID
+
+`GET /api/v1/products/{id}`
+
+### ➡️ Update Product
+
+`PUT /api/v1/products/{id}`
+
 ```json
 {
   "name": "iPhone 13",
-  "description": "Apple latest phone",
   "price": 59999.99,
   "category": "Mobile"
 }
 ```
 
-Response:
-```json
-{
-  "status": "SUCCESS",
-  "code": 200,
-  "message": "Product fetched successfully",
-  "data": {
-    "productId": "9adfad9a-4c52-40a6-9ea6-80152e70fd5b",
-    "name": "iPhone 13 Pro",
-    "description": "Apple flagship phone",
-    "price": 69999.99,
-    "category": "Mobile",
-    "active": true,
-    "createdAt": "2025-08-26T18:45:32.015",
-    "updatedAt": "2025-08-26T18:50:12.152"
-  },
-  "timestamp": "2025-08-26T20:40:00"
-}
+### ➡️ Deactivate Product
+
+`PATCH /api/v1/products/{id}/deactivate`
+
+---
+
+## Database Notes
+
+* Current config:
+
+  ```properties
+  spring.jpa.hibernate.ddl-auto=none
+  ```
+* Tables **will not auto-create**.
+* Schema & initial data come from `infra/postgres/init.sql`.
+* If you drop DB or volumes → `init.sql` runs automatically to recreate schema + seed data.
+
+---
+
+## Dev Notes
+
+* `active` defaults to **true** if not passed in request.
+* Health check: `/actuator/health`.
+* For code changes, re-run: `docker compose up -d --build` from `infra`.
+
+---
+
+## 🔄 Development Workflow
+
+#### 1. Fast local iteration (Recommended for dev)
+
+For small code changes, avoid rebuilding Docker images:
+
+```bash
+mvn spring-boot:run
 ```
 
-➡️ Get All Products
+👉 Before running locally, **delete infra volumes** (to avoid Kafka/Postgres state conflicts):
 
-**GET** `/api/v1/products`
-
-Response:
-```json
-[
-	{
-	  "status": "SUCCESS",
-	  "code": 200,
-	  "message": "Products fetched successfully",
-	  "data": {
-		"productId": "9adfad9a-4c52-40a6-9ea6-80152e70fd5b",
-		"name": "iPhone 13 Pro",
-		"description": "Apple flagship phone",
-		"price": 69999.99,
-		"category": "Mobile",
-		"active": true,
-		"createdAt": "2025-08-26T18:45:32.015",
-		"updatedAt": "2025-08-26T18:50:12.152"
-	  },
-	  "timestamp": "2025-08-26T20:40:00"
-	}
-]
+```bash
+rm -rf infra/kafka-data infra/zookeeper-data infra/postgres-data
 ```
 
-➡️ Get Product by ID
+#### 2. Full rebuild (when dependencies change)
 
-**GET** `/api/v1/products/{id}`
-
-Response:
-```json
-{
-  "status": "SUCCESS",
-  "code": 200,
-  "message": "Product fetched successfully",
-  "data": {
-    "productId": "9adfad9a-4c52-40a6-9ea6-80152e70fd5b",
-    "name": "iPhone 13 Pro",
-    "description": "Apple flagship phone",
-    "price": 69999.99,
-    "category": "Mobile",
-    "active": true,
-    "createdAt": "2025-08-26T18:45:32.015",
-    "updatedAt": "2025-08-26T18:50:12.152"
-  },
-  "timestamp": "2025-08-26T20:40:00"
-}
+```bash
+cd infra
+docker compose down -v
+docker compose up -d --build
 ```
 
-➡️ Update Product
+---
 
-**PUT** `/api/v1/products/{id}`
+### Run Locally (Without Docker)
 
-Request Body:
-```json
-{
-  "name": "iPhone 13 Pro",
-  "description": "Apple flagship phone",
-  "price": 69999.99,
-  "category": "Mobile"
-}
-```
+* If you want to run the catalog-service as a plain Spring Boot application without Docker/Kafka,
+* check out the [`standalone-catalog-service`](https://github.com/your-repo/catalog-service/tree/standalone-catalog-service) branch.
 
-Response:
-```json
-{
-    "status": "SUCCESS",
-    "code": 200,
-    "message": "Product updated successfully",
-    "data": {
-        "productId": "7d121aba-3ba4-4e03-a0c3-e9413df2c341",
-        "name": "iPhone 15 Pro",
-        "description": "Apple flagship model",
-        "price": 99999.99,
-        "category": "Mobile",
-        "active": false,
-        "createdAt": "2025-08-27T05:41:26.699259",
-        "updatedAt": "2025-08-27T05:41:26.699259"
-    },
-    "timestamp": "2025-08-27T05:42:23.259388"
-}
-```
+* That branch:
+	- Does not require Kafka or Docker.
+	- Uses `spring.jpa.hibernate.ddl-auto=update` so schema is auto-created.
+	- Only supports basic APIs (`GET`, `POST`, etc.) without event streaming.
 
-➡️ Deactivate Product
-
-**PATCH** `/api/v1/products/{id}/deactivate`
-
-Response:
-```json
-{
-    "status": "SUCCESS",
-    "code": 200,
-    "message": "Product deactivated successfully",
-    "data": {
-        "productId": "59407794-7f39-40a3-9694-30d17b825ad1",
-        "name": null,
-        "description": null,
-        "price": null,
-        "category": null,
-        "active": false,
-        "createdAt": "2025-08-26T23:46:45.30091",
-        "updatedAt": "2025-08-27T05:57:20.1327478"
-    },
-    "timestamp": "2025-08-27T05:57:20.18359"
-}
 ```
