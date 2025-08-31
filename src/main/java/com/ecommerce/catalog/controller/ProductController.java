@@ -15,19 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
-@Slf4j
 public class ProductController {
 
     private final ProductService productService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductDto productDto) {
-    	log.info("Incoming productDto: {}", productDto);
     	Product created = productService.createProduct(ProductMapper.toEntity(productDto));
     	ResponseEntity<ApiResponse<ProductDto>> prod =  ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<ProductDto>builder()
@@ -38,7 +35,6 @@ public class ProductController {
                         .timestamp(LocalDateTime.now())
                         .build()
         );
-    	log.info("Incoming prod: {}", prod);
     	return prod;
     }
 

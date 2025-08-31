@@ -150,11 +150,20 @@ docker compose up -d --build
 ### Run Locally (Without Docker)
 
 * If you want to run the catalog-service as a plain Spring Boot application without Docker/Kafka,
-* check out the [`standalone-catalog-service`](https://github.com/your-repo/catalog-service/tree/standalone-catalog-service) branch.
+* check out the [`standalone-catalog-service`](https://github.com/ecommerce-lifecycle/catalog-service/tree/standalone-catalog-service) branch.
 
 * That branch:
 	- Does not require Kafka or Docker.
 	- Uses `spring.jpa.hibernate.ddl-auto=update` so schema is auto-created.
 	- Only supports basic APIs (`GET`, `POST`, etc.) without event streaming.
 
-```
+---
+
+## 🐳 Running with Docker & Infra
+
+This branch (`catalog-service-with-infra`) includes full infra setup:
+- PostgreSQL + pgAdmin
+- Kafka + Zookeeper
+- Catalog service Dockerized
+
+---
