@@ -63,9 +63,9 @@ docker logs -f catalog-service
   "message": "Product created successfully",
   "data": {
     "id": "9adfad9a-4c52-40a6-9ea6-80152e70fd5b",
-    "name": "iPhone 13",
-    "description": "Apple latest phone",
-    "price": 59999.99,
+    "name": "OnePlus Nord CE 4",
+    "description": "OnePlus latest phone",
+    "price": 34999,
     "category": "Mobile",
     "active": true,
     "createdAt": "2025-08-26T18:45:32.015",
@@ -157,4 +157,4 @@ docker compose up -d --build
 	- Uses `spring.jpa.hibernate.ddl-auto=update` so schema is auto-created.
 	- Only supports basic APIs (`GET`, `POST`, etc.) without event streaming.
 
-```
+---
