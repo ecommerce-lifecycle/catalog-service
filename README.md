@@ -21,7 +21,8 @@
 1) **Clone both repos in a parent folder:**
 ```bash
 # Parent folder
-mkdir -p ~/ecommerce-lifecycle && cd ~/ecommerce-lifecycle
+mkdir %USERPROFILE%\ecommerce-lifecycle
+cd %USERPROFILE%\ecommerce-lifecycle
 
 # Clone repos
 git clone https://github.com/ecommerce-lifecycle/catalog-service.git
