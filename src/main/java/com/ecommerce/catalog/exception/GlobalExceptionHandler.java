@@ -16,6 +16,8 @@ import jakarta.persistence.*;
 import jakarta.validation.ConstraintViolationException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -32,6 +34,28 @@ public class GlobalExceptionHandler {
                 .timestamp(LocalDateTime.now())
                 .build();
         return new ResponseEntity<>(response, status);
+    }
+    
+    @ExceptionHandler(InvalidProductException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidProduct(InvalidProductException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", "ERROR");
+        error.put("code", 400);
+        error.put("message", ex.getMessage());
+        error.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", "ERROR");
+        error.put("code", 500);
+        error.put("message", "Unexpected error: " + ex.getMessage());
+        error.put("timestamp", LocalDateTime.now());
+
+        return ResponseEntity.internalServerError().body(error);
     }
 
     // -------------------- CREATE --------------------

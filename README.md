@@ -5,6 +5,17 @@
 
 ---
 
+## 🛠️ Technologies & Tools Used
+
+* **Java 17+** (tested on OpenJDK 17, compatible with 21)  
+* **Spring Boot 3.x**  
+* **Maven** – Build tool & dependency management  
+* **Eclipse STS / IntelliJ IDEA / VS Code** – IDEs for development (choose any)  
+
+👉 For full infrastructure setup (Kafka, Postgres, Docker), check [infra repo](https://github.com/ecommerce-lifecycle/infra).
+
+---
+
 ## Quick Start (via Infra)
 
 1) **Clone both repos in a parent folder:**
