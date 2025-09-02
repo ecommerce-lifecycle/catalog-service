@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🔴 Utility method to build ApiResponse
+    // Utility method to build ApiResponse
     private ResponseEntity<ApiResponse<Object>> buildResponse(HttpStatus status, String message) {
         ApiResponse<Object> response = ApiResponse.builder()
                 .status("ERROR")
