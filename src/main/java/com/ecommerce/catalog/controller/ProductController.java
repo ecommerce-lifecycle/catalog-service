@@ -1,10 +1,13 @@
 package com.ecommerce.catalog.controller;
 
-import com.ecommerce.catalog.api.ApiResponse;
+import com.ecommerce.catalog.dto.ApiResponse;
+import com.ecommerce.catalog.dto.ProductCreateRequestDto;
 import com.ecommerce.catalog.dto.ProductDto;
-import com.ecommerce.catalog.mapper.ProductMapper;
+import com.ecommerce.catalog.dto.ProductMapper;
+import com.ecommerce.catalog.dto.ProductUpdateRequestDto;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.service.ProductService;
+import com.ecommerce.catalog.util.DateTimeProvider;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,15 +26,15 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductDto productDto) {
-    	Product created = productService.createProduct(ProductMapper.toEntity(productDto));
+    public ResponseEntity<ApiResponse<ProductDto>> create(@Valid @RequestBody ProductCreateRequestDto productDto) {
+    	Product created = productService.createProduct(productDto);
     	ResponseEntity<ApiResponse<ProductDto>> prod =  ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.CREATED.value())
                         .message("Product created successfully")
                         .data(ProductMapper.toDto(created))
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeProvider.now())
                         .build()
         );
     	return prod;
@@ -49,7 +51,7 @@ public class ProductController {
                         .data(products.stream()
                                 .map(ProductMapper::toDto)
                                 .toList())
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeProvider.now())
                         .build()
         );
     }
@@ -63,7 +65,7 @@ public class ProductController {
                         .code(HttpStatus.OK.value())
                         .message("Product fetched successfully")
                         .data(ProductMapper.toDto(product))
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeProvider.now())
                         .build()
         );
     }
@@ -71,16 +73,16 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductDto>> update(
             @PathVariable UUID id,
-            @Valid @RequestBody ProductDto productDto) {
+            @Valid @RequestBody ProductUpdateRequestDto productDto) {
 
-        Product updated = productService.updateProduct(id, ProductMapper.toEntity(productDto));
+        Product updated = productService.updateProduct(id, productDto);
         return ResponseEntity.ok(
                 ApiResponse.<ProductDto>builder()
                         .status("SUCCESS")
                         .code(HttpStatus.OK.value())
                         .message("Product updated successfully")
                         .data(ProductMapper.toDto(updated))
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeProvider.now())
                         .build()
         );
     }
@@ -94,7 +96,7 @@ public class ProductController {
                         .code(HttpStatus.OK.value())
                         .message("Product deactivated successfully")
                         .data(ProductMapper.toDto(deactivated))
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeProvider.now())
                         .build()
         );
     }

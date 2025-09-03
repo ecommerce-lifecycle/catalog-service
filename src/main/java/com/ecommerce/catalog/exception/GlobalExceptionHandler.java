@@ -1,6 +1,7 @@
 package com.ecommerce.catalog.exception;
 
-import com.ecommerce.catalog.api.ApiResponse;
+import com.ecommerce.catalog.dto.ApiResponse;
+import com.ecommerce.catalog.util.DateTimeProvider;
 
 import org.hibernate.LazyInitializationException;
 import org.springframework.dao.*;
@@ -24,14 +25,14 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🔴 Utility method to build ApiResponse
+    // Utility method to build ApiResponse
     private ResponseEntity<ApiResponse<Object>> buildResponse(HttpStatus status, String message) {
         ApiResponse<Object> response = ApiResponse.builder()
                 .status("ERROR")
                 .code(status.value())
                 .message(message)
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(DateTimeProvider.now())
                 .build();
         return new ResponseEntity<>(response, status);
     }
@@ -42,18 +43,20 @@ public class GlobalExceptionHandler {
         error.put("status", "ERROR");
         error.put("code", 400);
         error.put("message", ex.getMessage());
-        error.put("timestamp", LocalDateTime.now());
+        error.put("timestamp", DateTimeProvider.now());
 
         return ResponseEntity.badRequest().body(error);
     }
 
+    // -------------------- FALLBACK --------------------
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneral(Exception ex) {
         Map<String, Object> error = new HashMap<>();
         error.put("status", "ERROR");
         error.put("code", 500);
         error.put("message", "Unexpected error: " + ex.getMessage());
-        error.put("timestamp", LocalDateTime.now());
+        error.put("timestamp", DateTimeProvider.now());
 
         return ResponseEntity.internalServerError().body(error);
     }
@@ -137,12 +140,5 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiResponse<Object>> handleIllegalState(IllegalStateException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-    }
-
-    // -------------------- FALLBACK --------------------
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Object>> handleGeneric(Exception ex) {
-        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error: " + ex.getMessage());
     }
 }

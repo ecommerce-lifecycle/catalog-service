@@ -9,9 +9,16 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+    jackson:
+      time-zone: Asia/Kolkata
     properties:
       hibernate:
         format_sql: true
+        jdbc:
+          time_zone: Asia/Kolkata
+
+  
+
 
   application:
     name: catalog-service

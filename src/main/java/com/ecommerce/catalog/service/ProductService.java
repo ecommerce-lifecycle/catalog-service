@@ -1,11 +1,15 @@
-package com.ecommerce.catalog.service;
+	package com.ecommerce.catalog.service;
 
+import com.ecommerce.catalog.dto.ProductCreateRequestDto;
+import com.ecommerce.catalog.dto.ProductMapper;
+import com.ecommerce.catalog.dto.ProductUpdateRequestDto;
 import com.ecommerce.catalog.entity.Product;
 import com.ecommerce.catalog.events.ProductEventProducer;
 import com.ecommerce.catalog.events.ProductPayload;
 import com.ecommerce.catalog.exception.InvalidProductException;
 import com.ecommerce.catalog.exception.ProductNotFoundException;
-import com.ecommerce.catalog.repository.ProductRepository;
+import com.ecommerce.catalog.util.DateTimeProvider;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +19,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,15 +38,16 @@ public class ProductService {
 
     // ---------------- CREATE ----------------
     @Transactional
-    public Product createProduct(Product product) {
-        if (product == null) {
+    public Product createProduct(ProductCreateRequestDto dto) {
+        if (dto == null) {
             throw new InvalidProductException("Product cannot be null");
         }
 
-        productValidator.validate(product);
+        productValidator.validateCreateRequest(dto);
+        Product product = ProductMapper.toEntity(dto);
 
         try {
-            log.debug("Creating product with data: {}", product);
+            log.info("Creating product with data: {}", product);
             Product saved =  productRepository.save(product);
             producer.productCreated(toPayload(saved));
             return saved;
@@ -94,15 +98,15 @@ public class ProductService {
 
     // ---------------- UPDATE ----------------
     @Transactional
-    public Product updateProduct(UUID id, Product product) {
+    public Product updateProduct(UUID id, ProductUpdateRequestDto dto) {
         if (id == null) {
             throw new IllegalArgumentException("Product ID cannot be null");
         }
-        if (product == null) {
+        if (dto == null) {
             throw new InvalidProductException("Product data cannot be null");
         }
 
-        productValidator.validate(product);
+        productValidator.validateUpdateRequest(dto);
 
         try {
             log.info("Updating product with id: {}", id);
@@ -111,13 +115,17 @@ public class ProductService {
                         log.error("Product not found for id: {}", id);
                         return new ProductNotFoundException("Product not found");
                     });
+           
+            ProductMapper.updateEntity(existing, dto);	
+            
+            // update only non-null fields from DTO
+            if (dto.getName() != null) existing.setName(dto.getName());
+            if (dto.getDescription() != null) existing.setDescription(dto.getDescription());
+            if (dto.getPrice() != null) existing.setPrice(dto.getPrice());
+            if (dto.getCategory() != null) existing.setCategory(dto.getCategory());
+            if (dto.getActive() != null) existing.setActive(dto.getActive());
 
-            existing.setName(product.getName());
-            existing.setDescription(product.getDescription());
-            existing.setPrice(product.getPrice());
-            existing.setCategory(product.getCategory());
-            existing.setActive(product.getActive());
-            existing.setUpdatedAt(LocalDateTime.now());
+            existing.setUpdatedAt(DateTimeProvider.now());
 
             Product updated = productRepository.save(existing);
 
@@ -160,7 +168,7 @@ public class ProductService {
             
             log.info("Deactivating product with id: {}", id);
             product.setActive(false);
-            product.setUpdatedAt(LocalDateTime.now());
+            product.setUpdatedAt(DateTimeProvider.now());
 
             Product deactivated = productRepository.save(product);
 
