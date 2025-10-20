@@ -1,16 +1,17 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # wait-for-it.sh: wait until a host:port is available
-
-set -e
 
 host="$1"
 shift
 port="$1"
 shift
 
-until nc -z "$host" "$port"; do
-  echo "Waiting for $host:$port..."
+echo "Waiting for $host:$port to be available..."
+
+while ! nc -z "$host" "$port" >/dev/null 2>&1; do
   sleep 2
 done
+
+echo "$host:$port is now available!"
 
 exec "$@"
